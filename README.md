@@ -88,12 +88,37 @@ STAR --genomeDir combined/StarIndexed_combined --readFilesIn FASTQ1.fq FASTQ2.fq
 # --alignSJoverhangMin 8 --alignSJDBoverhangMin 1
 # --outFilterMismatchNmax 999 --outFilterMismatchNoverLmax 0.04 --alignIntronMin 20 
 # --alignIntronMax 1000000 --alignMatesGapMax 0 --outSAMtype BAM SortedByCoordinate
-# --outReadsUnmapped Fastx  --chimSegmentMin 5 --chimJunctionOverhangMin 5 
-# --chimScoreMin 0
+# --chimSegmentMin 5 --chimJunctionOverhangMin 5  --chimScoreMin 0
 ```
+
+
 
 The output is a classical BAM file, that should be named `Aligned.sortedByCoord.out.bam`.
 
 
 
 ## Gene expression using SMAP and FeatureCount
+
+
+
+
+## Fusion
+
+
+refCDNA=/datacit/00_DATABANKS/ensembl_75_humanMouseXenome/hs75.hg19_mmu75.GRCm38_chrename_CDNA.fasta
+```sh
+
+wget -O -   | gunzip -c ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh37.75.cdna.all.fa.gz >Homo_sapiens.GRCh37.75.cdna.all.fa
+
+wget -O -   | gunzip -c  ftp://ftp.ensembl.org/pub/release-75/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.75.cdna.all.fa.gz >Mus_musculus.GRCm38.75.dna_sm.primary_assembly.fa
+
+cat Homo_sapiens.GRCh37.75.cdna.all.fa Mus_musculus.GRCm38.75.dna_sm.primary_assembly.fa >combined/combinedCdna.fa
+
+```
+
+```sh
+
+
+STAR-Fusion -J Chimeric.out.junction -G  combined/combined.gtf -C combined/combinedCdna.fa
+
+```
