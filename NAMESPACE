@@ -1,0 +1,8 @@
+export(SMAPcount, SMAPfuz)
+import(Rsubread)
+import(stringr)
+import(MASS)
+importFrom("graphics", "barplot", "legend", "par", "points",
+             "smoothScatter")
+importFrom("stats", "dnbinom", "p.adjust", "pchisq", "pnbinom")
+importFrom("utils", "read.delim")

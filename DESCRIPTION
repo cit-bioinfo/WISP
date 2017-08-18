@@ -1,0 +1,16 @@
+Package: SMAP
+Type: Package
+Title: SMAP: Simultaneous mapping for patient-derived xenografts
+Version: 0.1.0
+Author: Remy Nicolle and Yuna Blum
+Maintainer: Remy Nicolle <remy.c.nicolle@gmail.com>
+Description: This package processes highthroughput sequencing data,
+    in particular RNA-seq, from Xenografted samples. 
+    These are considered as a mix of host (usually nude mice) and
+    graft (usually human tumor) cells.
+Encoding: UTF-8
+LazyData: true
+Depends: Rsubread, stringr, MASS
+License: GPL (>= 2)
+Packaged: 2017-08-04 16:15:01 UTC; yuna.blum
+NeedsCompilation: no
