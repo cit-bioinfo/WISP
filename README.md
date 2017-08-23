@@ -1,24 +1,20 @@
 # SMAP
-SMAP: sequencing patient-derived xenografts
 
-
-
-SMAP is a pipeline designed to process xenografts sequencing data.
+SMAP is a pipeline for the process of xenografts sequencing data.
 
 It takes FASTQ as input and outputs specie-specific BAM or gene counts.
 
 
-
 ## SMAP steps
-SMAP requires a simple [installation](#install).
 
 
 These are the few steps to run a complete SMAP pipeline, from genome file download to obtaining specie-specific gene counts and fusion transcripts.
 
-1. [Download and combine reference genomes and transcriptomes](#downloadCombine). A shell script is given to simplify the genome combination process.
-2. [Alignment to combined reference genome/transcriptome](#align). This should follow the usual process of read alignement.
-3. [Gene expression quantification](#genexp)
-4. [Fusion detection](#fusion)
+0. SMAP requires a simple [installation](#install) step
+1. [Download and combine reference genomes and transcriptomes](#downloadCombine). A shell script is given to simplify the genome combination process
+2. [Alignment to combined reference genome/transcriptome](#align). This should follow the usual process of read alignement
+3. [Gene expression quantification](#genexp). The SMAP R package provides all necessary steps to quantify the expression of genes (or exons) of the host and the graft sequences seperatly
+4. [Fusion detection](#fusion). The SMAP R package provides a function to efficiently filter false positive gene fusions
 5. [BAM file seperation](#bamsplit), only required for other types of analysis such as variant calling.
 
 
@@ -26,7 +22,7 @@ These are the few steps to run a complete SMAP pipeline, from genome file downlo
 <a name="install"></a>
 
 
-The SMAP R package can be installed by downloading/cloning the repository and using `R CMD INSTALL` or directly from R using the devtools package: 
+The SMAP R package can be installed by downloading/cloning [the repository](https://github.com/RemyNicolle/SMAP) and using `R CMD INSTALL` or directly from R using the devtools package: 
 ```R
 # If not already installed, install the devtools package
 install.packages("devtools")
@@ -60,7 +56,7 @@ These steps, shown for human and mouse xenografts, detail how to prepare referen
 
 ### 1.1 Download reference genomes and transcriptomes
 
-It may take several minutes to download the entire genomes of both species.
+It may take several minutes to download the entire genome of both species.
 
 Human :
 
@@ -84,6 +80,10 @@ wget -O -   ftp://ftp.ensembl.org/pub/release-75/gtf/mus_musculus/Mus_musculus.G
 
 ### 1.2 Combine genomes and transcriptomes
 
+
+Use the provided `SMAP_prepareReference.sh` shell script to prepare the reference genome and transcriptomes.
+
+
 ```shell
 sh SMAP_prepareReference.sh \
 -t Homo_sapiens.GRCh37.75.dna_sm.primary_assembly.fa \
@@ -93,14 +93,17 @@ sh SMAP_prepareReference.sh \
 -o combined
 ```
 
-The combined genome and transcriptome will be available under the **combined** directory, as announced by the output of `SMAP_prepareReference.sh`.
+The combined genome and transcriptome will be available under the **combined** directory (can be modified using the `-o` argument), as announced by the output of `SMAP_prepareReference.sh`.
 
 
 
 ## 2 Align reads to the combined reference genome and transcriptome using STAR
 <a name="align"></a>
 
-The  `SMAP_prepareReference.sh` script gives the next command to run which aims at preparing files for RNAseq reads alignement using STAR. This only needs to be done once for all samples.
+The SMAP pipeline is aligner-agnostic. However, STAR is recommended. This section details how to run STAR. Any personnal or institutional STAR pipeline can be used here with the SMAP combined genome/transcriptome.
+
+
+STAR first requires the combined genome/transcriptome to be indexed. This only needs to be done once for a given pair of genomes.
 
 ```shell
 mkdir combined/StarIndexed_combined
@@ -110,7 +113,7 @@ STAR --runMode genomeGenerate --genomeDir combined/StarIndexed_combined    --gen
 
 
 
-Each of the samples can then be mapped using the following STAR command in which `combined/StarIndexed_combined` is the STAR indexed combined genome/transcriptome generated in the precedent command, `FASTQ1.fq` and `FASTQ2.fq` are the paired raw FASTQ files of the sample and `combined/combined.gtf` is the newly  reference transcriptome (gtf) created by the `SMAP_prepareReference.sh` script.
+Each of the samples can then be mapped using the following STAR command in which `combined/StarIndexed_combined` is the STAR indexed SMAP combined genome/transcriptome generated in the precedent command, `FASTQ1.fq` and `FASTQ2.fq` are the paired raw FASTQ files of the sample and `combined/combined.gtf` is the newly  reference transcriptome (gtf) created by the `SMAP_prepareReference.sh` script.
 
 ```shell
 STAR --genomeDir combined/StarIndexed_combined --readFilesIn FASTQ1.fq FASTQ2.fq --sjdbGTFfile combined/combined.gtf --outFilterType BySJout --outFilterMultimapNmax 100   --outSAMtype BAM SortedByCoordinate  
@@ -125,7 +128,7 @@ STAR --genomeDir combined/StarIndexed_combined --readFilesIn FASTQ1.fq FASTQ2.fq
 
 
 
-The output is a classical BAM file, that should be named `Aligned.sortedByCoord.out.bam`.
+The output is a classical BAM file, that is usually be named `Aligned.sortedByCoord.out.bam`.
 
 
 
