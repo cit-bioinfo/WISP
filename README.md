@@ -10,15 +10,20 @@ It takes FASTQ as input and outputs specie-specific BAM or gene counts.
 
 
 ## SMAP steps
+SMAP requires a simple [installation](#install).
+
 
 These are the few steps to run a complete SMAP pipeline, from genome file download to obtaining specie-specific gene counts and fusion transcripts.
 
 1. [Download and combine reference genomes and transcriptomes](#downloadCombine). A shell script is given to simplify the genome combination process.
-2. [Alignment to combined reference genome/transcriptome](## Align reads to the combined reference genome and transcriptome using STAR). This should follow the usual process of read alignement.
-3. 
+2. [Alignment to combined reference genome/transcriptome](#align). This should follow the usual process of read alignement.
+3. [Gene expression quantification](#genexp)
+4. [Fusion detection](#fusion)
+5. [BAM file seperation](#bamsplit), only required for other types of analysis such as variant calling.
 
 
 ## 0 Install
+<a name="install"></a>
 
 
 The SMAP R package can be installed by downloading/cloning the repository and using `R CMD INSTALL` or directly from R using the devtools package: 
@@ -41,12 +46,15 @@ wget https://raw.githubusercontent.com/RemyNicolle/SMAP/master/SMAP_prepareRefer
 wget https://raw.githubusercontent.com/RemyNicolle/SMAP/master/smap_splitBySpecie_standard.py
 ```
 
+__Requirements__ The BAM file seperation `smap_splitBySpecie_standard.py` script (which is not required for gene quantification) requires the `pysam` python module. 
+
+
 
 ## 1 Prepare combined reference genomes and transcriptome
 
 <a name="downloadCombine"></a>
 
-These steps, shown for human and mouse xenografts, show how to prepare reference genome and transcriptome for SMAP. 
+These steps, shown for human and mouse xenografts, detail how to prepare reference genome and transcriptome for SMAP. 
 
 
 
@@ -90,6 +98,7 @@ The combined genome and transcriptome will be available under the **combined** d
 
 
 ## 2 Align reads to the combined reference genome and transcriptome using STAR
+<a name="align"></a>
 
 The  `SMAP_prepareReference.sh` script gives the next command to run which aims at preparing files for RNAseq reads alignement using STAR. This only needs to be done once for all samples.
 
@@ -121,12 +130,12 @@ The output is a classical BAM file, that should be named `Aligned.sortedByCoord.
 
 
 ## 3 Gene expression using SMAP and FeatureCount
-
+<a name="genexp"></a>
 
 
 
 ## 4 Fusion
-
+<a name="fusion"></a>
 
 refCDNA=/datacit/00_DATABANKS/ensembl_75_humanMouseXenome/hs75.hg19_mmu75.GRCm38_chrename_CDNA.fasta
 ```sh
@@ -147,3 +156,4 @@ STAR-Fusion -J Chimeric.out.junction -G  combined/combined.gtf -C combined/combi
 ```
 
 ## 5 Seperate BAM files
+<a name="bamsplit"></a>
