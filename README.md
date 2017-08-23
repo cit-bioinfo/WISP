@@ -3,7 +3,7 @@ SMAP: sequencing patient-derived xenografts
 
 
 
-SMAP is a pipeline designed to process xenografts sequencing data. 
+SMAP is a pipeline designed to process xenografts sequencing data.
 
 It takes FASTQ as input and outputs specie-specific BAM or gene counts.
 
@@ -13,13 +13,36 @@ It takes FASTQ as input and outputs specie-specific BAM or gene counts.
 
 These are the few steps to run a complete SMAP pipeline, from genome file download to obtaining specie-specific gene counts and fusion transcripts.
 
-1. [Download and combine reference genomes and transcriptomes][#downloadCombine]. A shell script is given to simplify the genome combination process.
-2. [Alignment to combined reference genome/transcriptome][## Align reads to the combined reference genome and transcriptome using STAR]. This should follow the usual process of read alignement.
-3. ​
+1. [Download and combine reference genomes and transcriptomes](#downloadCombine). A shell script is given to simplify the genome combination process.
+2. [Alignment to combined reference genome/transcriptome](## Align reads to the combined reference genome and transcriptome using STAR). This should follow the usual process of read alignement.
+3. 
 
 
+## 0 Install
 
-##  Prepare combined reference genomes and transcriptome
+
+The SMAP R package can be installed by downloading/cloning the repository and using `R CMD INSTALL` or directly from R using the devtools package: 
+```R
+# If not already installed, install the devtools package
+install.packages("devtools")
+
+library(devtools)
+install_github("RemyNicolle/SMAP")
+```
+
+The SMAP pipeline requires two additional scripts. These are included in the downloaded/cloned repository. They can also be downloaded seperately:
+- A shell script to prepare the genomes and transcriptomes of reference: [SMAP_prepareReference.sh](https://raw.githubusercontent.com/RemyNicolle/SMAP/master/SMAP_prepareReference.sh)
+- A python script to seperate the BAM file of aligned reads based on their predicted specie of origin: [smap_splitBySpecie_standard.py](https://raw.githubusercontent.com/RemyNicolle/SMAP/master/smap_splitBySpecie_standard.py)
+
+
+To download these scripts seperately:
+```shell
+wget https://raw.githubusercontent.com/RemyNicolle/SMAP/master/SMAP_prepareReference.sh
+wget https://raw.githubusercontent.com/RemyNicolle/SMAP/master/smap_splitBySpecie_standard.py
+```
+
+
+## 1 Prepare combined reference genomes and transcriptome
 
 <a name="downloadCombine"></a>
 
@@ -27,7 +50,7 @@ These steps, shown for human and mouse xenografts, show how to prepare reference
 
 
 
-### Download reference genomes and transcriptomes
+### 1.1 Download reference genomes and transcriptomes
 
 It may take several minutes to download the entire genomes of both species.
 
@@ -51,7 +74,7 @@ wget -O -  ftp://ftp.ensembl.org/pub/release-75/fasta/mus_musculus/dna/Mus_muscu
 wget -O -   ftp://ftp.ensembl.org/pub/release-75/gtf/mus_musculus/Mus_musculus.GRCm38.75.gtf.gz | gunzip -c > Mus_musculus.GRCm38.75.gtf   
 ```
 
-### Combine genomes and transcriptomes
+### 1.2 Combine genomes and transcriptomes
 
 ```shell
 sh SMAP_prepareReference.sh \
@@ -66,7 +89,7 @@ The combined genome and transcriptome will be available under the **combined** d
 
 
 
-## Align reads to the combined reference genome and transcriptome using STAR
+## 2 Align reads to the combined reference genome and transcriptome using STAR
 
 The  `SMAP_prepareReference.sh` script gives the next command to run which aims at preparing files for RNAseq reads alignement using STAR. This only needs to be done once for all samples.
 
@@ -97,12 +120,12 @@ The output is a classical BAM file, that should be named `Aligned.sortedByCoord.
 
 
 
-## Gene expression using SMAP and FeatureCount
+## 3 Gene expression using SMAP and FeatureCount
 
 
 
 
-## Fusion
+## 4 Fusion
 
 
 refCDNA=/datacit/00_DATABANKS/ensembl_75_humanMouseXenome/hs75.hg19_mmu75.GRCm38_chrename_CDNA.fasta
@@ -122,3 +145,5 @@ cat Homo_sapiens.GRCh37.75.cdna.all.fa Mus_musculus.GRCm38.75.dna_sm.primary_ass
 STAR-Fusion -J Chimeric.out.junction -G  combined/combined.gtf -C combined/combinedCdna.fa
 
 ```
+
+## 5 Seperate BAM files
