@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 
 # Author : Remy Nicolle
-# Date   :  created 13 nov. 2015
+# Date   : created 13 nov. 2015
 
 # This script aims at getting a Graft specific BAM (usually Human) and a Host specific BAM (usually mice).
 
