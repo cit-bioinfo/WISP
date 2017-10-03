@@ -148,7 +148,7 @@ countsHost = counts$FCcountsHost
 ## 4 Fusion
 <a name="fusion"></a>
 
-refCDNA=/datacit/00_DATABANKS/ensembl_75_humanMouseXenome/hs75.hg19_mmu75.GRCm38_chrename_CDNA.fasta
+First, run the STAR-Fusion tool after dowloading the following fasta files:
 ```sh
 
 wget -O -   | gunzip -c ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh37.75.cdna.all.fa.gz >Homo_sapiens.GRCh37.75.cdna.all.fa
@@ -158,7 +158,7 @@ wget -O -   | gunzip -c  ftp://ftp.ensembl.org/pub/release-75/fasta/mus_musculus
 cat Homo_sapiens.GRCh37.75.cdna.all.fa Mus_musculus.GRCm38.75.dna_sm.primary_assembly.fa >combined/combinedCdna.fa
 
 ```
-
+STAR-Fusion command line:
 ```sh
 
 
@@ -171,13 +171,13 @@ This function aims at defining the best thresholds for chimeric transcripts dete
 
 ```
 #Example
-d=system.file( "extdata","Example_StarFusion_OUTPUT", package = "SMAP")
-fusions=SMAPfuz(STAR_FUSION_DIR=d,"hs")
-fusions_filtered=fusions[which(fusions$Combined_adj.pvalue < 0.01),]
-fusions_filtered=fusions[which(fusions$Combined_adj.pvalue < 0.001),]
+d = system.file( "extdata","Example_StarFusion_OUTPUT", package = "SMAP")
+fusions = SMAPfuz(STAR_FUSION_DIR=d,"hs")
+fusions_filtered = fusions[which(fusions$Combined_adj.pvalue < 0.01),]
+fusions_filtered = fusions[which(fusions$Combined_adj.pvalue < 0.001),]
 ```
 
-`fusions` is a data frame containing one fusion per line. In addition to the information given by STAR fusion, 4 colums are added : JunctionReads_Pvalue : the p-value of the junction read SpanningFrags_Pvalue : the p-value of the spanning fragments Combined_pvalue : The combined p-value using fishers method Combined_adj.pvalue : The FDR correction of the combined p-value
+`fusions` is a data frame containing one fusion per line. In addition to the information given by STAR fusion, 4 colums are added: JunctionReads_Pvalue: the p-value of the junction read SpanningFrags_Pvalue: the p-value of the spanning fragments Combined_pvalue: The combined p-value using fishers method Combined_adj.pvalue: The FDR correction of the combined p-value
 
 
 ## 5 Seperate BAM files
