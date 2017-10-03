@@ -143,7 +143,7 @@ counts = SMAPcount(SMAPBAM=d, GTF = paste(d, "combined/combined.gtf", sep = "/")
 countsTumor = counts$FCcountsTumor
 countsHost = counts$FCcountsHost
 ```
-
+`countsTumor` corresponds to the count data matrix for the tumor and `countsHost` to the one for the host.
 
 ## 4 Fusion
 <a name="fusion"></a>
