@@ -134,7 +134,14 @@ The output is a classical BAM file, that is usually be named `Aligned.sortedByCo
 
 ## 3 Gene expression using SMAP and FeatureCount
 <a name="genexp"></a>
+Use the `SMAPcount` function in the SMAP R package. This function gives two separate count data matrix for the tumor and host respectively from bam files using featurecount function at the gene or exon level. 
 
+```R
+ d=system.file("extdata","Example_STAR_OUTPUT", package = "SMAP")
+    counts = SMAPcount(SMAPBAM=d, GTF =paste(d, "combined/combined.gtf", sep="/"))
+    countsTumor= counts$FCcountsTumor
+    countsHost= counts$FCcountsHost
+```
 
 
 ## 4 Fusion
