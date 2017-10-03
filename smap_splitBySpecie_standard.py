@@ -3,14 +3,7 @@
 # Author : Remy Nicolle
 # Date   :  created 13 nov. 2015
 
-# This script aims at getting a Human specific BAM of whatever you want
-
-
-
-
-# TODO :    set option for lower score is better
-# TODO :    Deal with single end sequencing
-
+# This script aims at getting a Graft specific BAM (usually Human) and a Host specific BAM (usually mice).
 
 
 import sys
