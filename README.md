@@ -182,7 +182,7 @@ fusions_filtered = fusions[which(fusions$Combined_adj.pvalue < 0.001),]
 
 ## 5 Seperate BAM files
 <a name="bamsplit"></a>
-Use the provided `smap_splitBySpecie_standard.py` python script to split a bam file: one for the host and one for the graft.
+Use the provided `smap_splitBySpecie_standard.py` python script to split a bam file into 2 bam files: one for the host and one for the graft.
 ```shell
 python smap_splitBySpecie_standard.py bamfile.bam
 ```
