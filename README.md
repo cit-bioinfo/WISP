@@ -167,7 +167,7 @@ STAR-Fusion -J Chimeric.out.junction -G  combined/combined.gtf -C combined/combi
 ```
 
 After running the STAR-Fusion tool, use the `SMAPfuz` function in the SMAP R package. 
-This function aims at defining the best thresholds for chimeric transcripts detection. It is based on an estimation of an H0 distribution of parameters of eahc of the detected fusion transcritps by taking into account the impossibility of observing cross-species fusions and therefore using them to define the parameters of H0. As of now, only the number of spanning fragments and of junction reads are used.
+This function aims at defining the best thresholds for chimeric transcripts detection. It is based on an estimation of an H0 distribution of parameters of each of the detected fusion transcripts by taking into account the impossibility of observing cross-species fusions and therefore using them to define the parameters of H0. As of now, only the number of spanning fragments and of junction reads are used.
 
 ```
 #Example
