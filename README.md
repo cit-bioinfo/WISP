@@ -166,7 +166,7 @@ STAR-Fusion -J Chimeric.out.junction -G  combined/combined.gtf -C combined/combi
 
 ```
 
-After running the STAR-Fusion tool, use the `SMAPfuz` in the SMAP R package. 
+After running the STAR-Fusion tool, use the `SMAPfuz` function in the SMAP R package. 
 This function aims at defining the best thresholds for chimeric transcripts detection. It is based on an estimation of an H0 distribution of parameters of eahc of the detected fusion transcritps by taking into account the impossibility of observing cross-species fusions and therefore using them to define the parameters of H0. As of now, only the number of spanning fragments and of junction reads are used.
 
 ```
@@ -182,3 +182,7 @@ fusions_filtered = fusions[which(fusions$Combined_adj.pvalue < 0.001),]
 
 ## 5 Seperate BAM files
 <a name="bamsplit"></a>
+Use the provided `smap_splitBySpecie_standard.py` python script to split a bam file: one for the host and one for the graft.
+```shell
+python smap_splitBySpecie_standard.py bamfile.bam
+```
