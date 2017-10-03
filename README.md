@@ -134,7 +134,7 @@ The output is a classical BAM file, that is usually be named `Aligned.sortedByCo
 
 ## 3 Gene expression using SMAP and FeatureCount
 <a name="genexp"></a>
-Use the `SMAPcount` function in the SMAP R package. This function gives two separate count data matrix for the tumor and host respectively from bam files using featurecount function at the gene or exon level. 
+Use the `SMAPcount` function in the SMAP R package. This function gives two separate count data matrix for the tumor and host respectively from bam files using featurecount function at the gene or exon level (gene level by default). 
 
 ```
 #Example
@@ -165,6 +165,20 @@ cat Homo_sapiens.GRCh37.75.cdna.all.fa Mus_musculus.GRCm38.75.dna_sm.primary_ass
 STAR-Fusion -J Chimeric.out.junction -G  combined/combined.gtf -C combined/combinedCdna.fa
 
 ```
+
+After running the STAR-Fusion tool, use the `SMAPfuz` in the SMAP R package. 
+This function aims at defining the best thresholds for chimeric transcripts detection. It is based on an estimation of an H0 distribution of parameters of eahc of the detected fusion transcritps by taking into account the impossibility of observing cross-species fusions and therefore using them to define the parameters of H0. As of now, only the number of spanning fragments and of junction reads are used.
+
+```
+#Example
+d=system.file( "extdata","Example_StarFusion_OUTPUT", package = "SMAP")
+fusions=SMAPfuz(STAR_FUSION_DIR=d,"hs")
+fusions_filtered=fusions[which(fusions$Combined_adj.pvalue < 0.01),]
+fusions_filtered=fusions[which(fusions$Combined_adj.pvalue < 0.001),]
+```
+
+`fusions` is a data frame containing one fusion per line. In addition to the information given by STAR fusion, 4 colums are added : JunctionReads_Pvalue : the p-value of the junction read SpanningFrags_Pvalue : the p-value of the spanning fragments Combined_pvalue : The combined p-value using fishers method Combined_adj.pvalue : The FDR correction of the combined p-value
+
 
 ## 5 Seperate BAM files
 <a name="bamsplit"></a>
