@@ -8,7 +8,9 @@ WISP (Weighted In Silico Pathology) is a novel approach to assess intra-tumoral 
 WISP consists in 3 main steps: 
 
 1- [Calculation of pure population centroid profiles.](#Step1) 
+
 2- [Estimation of mixing proportions of pure populations for each tumoral sample.](#Step2)  
+
 3- [Graphical representations of the mixing proportion estimations for all samples.](#Step3) 
 
 
