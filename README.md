@@ -26,11 +26,9 @@ You may install this package with [devtools]:
 
 [devtools]: https://github.com/hadley/devtools
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r}
 devtools::install_github("YunaBlum/WISP")
-
 library(WISP)
-
 ```
 
 
