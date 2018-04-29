@@ -33,14 +33,14 @@ library(WISP)
 
 
 ## Illustrative datasets
-Illustrative gene expression datasets of presupposed pure histological samples and mixed samples from pleural mesothelioma restricted to specific markers (for computing time reason).
+Illustrative gene expression datasets of presupposed pure entity samples and mixed samples from pleural mesothelioma restricted to specific markers (for computing time reason).
 
 ```{r}
 data(dataWISP)
 ```
 `dataWISP` is a list containing the following objects:
 
-`datapure`: data frame of gene expression profiles of the presupposed pure histological samples.
+`datapure`: data frame of gene expression profiles of the presupposed pure entity samples.
 ```{r}
 dataWISP$datapure[1:5,1:5]
 ##              T036     T025      T022      T004      T016
@@ -50,14 +50,14 @@ dataWISP$datapure[1:5,1:5]
 ## NRG4     9.395325 10.71960 10.827885  9.734774  9.992148
 ## SLC28A3  6.529778 11.83156  9.828759 11.486970  6.404284
 ```
-`clpure`: vector of histology annotation for the presupposed pure histological samples.
+`clpure`: vector of histology annotation for the presupposed pure entity samples.
 ```{r}
 head(dataWISP$clpure)
 ##  T036  T025  T022  T004  T016  T014 
 ## Epure Epure Epure Epure Epure Epure 
 ## Levels: Epure normal Spure
 ```
-`data`: data frame of gene expression profiles of mixed histological samples.
+`data`: data frame of gene expression profiles of mixed samples.
 ```{r}
 dataWISP$data[1:5,1:5]
 ##              T013      T058      T066     T070      T078
