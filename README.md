@@ -7,9 +7,11 @@ WISP (Weighted In Silico Pathology) is a novel approach to assess intra-tumoral 
 
 WISP consists in 3 main steps: 
 
-1- [Calculation of pure population centroid profiles.] (#Step1) 
-2- [Estimation of mixing proportions of pure populations for each tumoral sample.] (#Step2)  
-3- [Graphical representations of the mixing proportion estimations for all samples.] (#Step3) 
+1- [Calculation of pure population centroid profiles.](#Step1) 
+
+2- [Estimation of mixing proportions of pure populations for each tumoral sample.](#Step2)  
+
+3- [Graphical representations of the mixing proportion estimations for all samples.](#Step3) 
 
 
 ## Citation
@@ -24,11 +26,9 @@ You may install this package with [devtools]:
 
 [devtools]: https://github.com/hadley/devtools
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r}
 devtools::install_github("YunaBlum/WISP")
-
 library(WISP)
-
 ```
 
 
@@ -44,11 +44,11 @@ data(dataWISP)
 ```{r}
 dataWISP$datapure[1:5,1:5]
 ##              T036     T025      T022      T004      T016
-## ITLN1   11.456054 11.80786 10.205246 12.201666  6.373776
-## PRG4    10.643914 13.40374 13.182918 13.249751 11.930280
-## PKHD1L1 10.722577 12.25111  7.501498 11.650849  5.084441
-## NRG4     9.395325 10.71960 10.827885  9.734774  9.992148
-## SLC28A3  6.529778 11.83156  9.828759 11.486970  6.404284
+## gene.1    11.456054 11.80786 10.205246 12.201666  6.373776
+## gene.2    10.643914 13.40374 13.182918 13.249751 11.930280
+## gene.3    10.722577 12.25111  7.501498 11.650849  5.084441
+## gene.4     9.395325 10.71960 10.827885  9.734774  9.992148
+## gene.5     6.529778 11.83156  9.828759 11.486970  6.404284
 ```
 `clpure`: vector of histology annotation for the presupposed pure histological samples.
 ```{r}
@@ -61,11 +61,11 @@ head(dataWISP$clpure)
 ```{r}
 dataWISP$data[1:5,1:5]
 ##              T013      T058      T066     T070      T078
-## ITLN1    8.178341 11.550232 11.840814 4.877618 11.587651
-## PRG4    12.967090 12.756574 13.391280 6.559053 13.054004
-## PKHD1L1 11.042867 11.442587 11.789554 4.659080 11.373127
-## NRG4     8.818490  8.240092  9.041123 4.707080  8.435392
-## SLC28A3 10.638619 10.920845 11.460884 5.814253  9.994315
+## gene.1    8.178341 11.550232 11.840814 4.877618 11.587651
+## gene.2    12.967090 12.756574 13.391280 6.559053 13.054004
+## gene.3    11.042867 11.442587 11.789554 4.659080 11.373127
+## gene.4     8.818490  8.240092  9.041123 4.707080  8.435392
+## gene.5    10.638619 10.920845 11.460884 5.814253  9.994315
 ```
 (optional) `histo`: histological annotation for all the samples present in `data` object. 
 ```{r}
@@ -115,13 +115,13 @@ The returned object of addition of a heatmap (if `plot_heatmap`=TRUE) is a list 
 ```{r}
 lapply(resPure, head)
 ## $genescentro
-##            Epure    Spure    normal
-## ITLN1   11.40341 4.847256  7.698763
-## PRG4    12.86137 6.867839 10.366323
-## PKHD1L1 10.32061 4.643993  7.937093
-## NRG4     9.68924 4.802799  5.343581
-## SLC28A3 10.69767 5.933601  6.433749
-## UPK1B   12.78011 8.357490  8.071400
+## Epure    Spure    normal
+## gene.1 11.40341 4.847256  7.698763
+## gene.2 12.86137 6.867839 10.366323
+## gene.3 10.32061 4.643993  7.937093
+## gene.4  9.68924 4.802799  5.343581
+## gene.5 10.69767 5.933601  6.433749
+## gene.6 12.78011 8.357490  8.071400
 ## 
 ## $indkept
 ##  Epure  Epure  Epure  Epure  Epure  Epure 
@@ -133,46 +133,30 @@ lapply(resPure, head)
 ## 
 ## $genesclasses
 ## $genesclasses$Epure
-##  [1] "ITLN1"        "PRG4"         "PKHD1L1"      "NRG4"        
-##  [5] "SLC28A3"      "UPK1B"        "LRP2"         "ANXA9"       
-##  [9] "HRASLS5"      "TGM1"         "MUC16"        "SOX6"        
-## [13] "CALB2"        "PLLP"         "BCO2"         "SGPP2"       
-## [17] "FAM153A"      "BNC1"         "CCDC64"       "UPK3B"       
-## [21] "LOC100129233" "LRRN4"        "FLRT3"        "CDON"        
-## [25] "FBXO22-AS1"   "PEX5L"        "PRR15"        "NPR1"        
-## [29] "ALOX12P2"     "MSLN"         "SLC4A4"       "RERG"        
-## [33] "ARHGAP44"     "PROCR"        "VTN"          "VIPR2"       
-## [37] "LOC100507387" "EFNA5"        "GAL3ST2"      "LOC100507088"
-## [41] "WT1"          "RERG-IT1"     "MEIS2"        "KLHL31"      
-## [45] "RAET1E"       "RSPO1"        "SH3RF2"       "NMU"         
-## [49] "ADH1C"        "SNORA70F"    
-## 
+## [1] "gene.1"  "gene.2"  "gene.3"  "gene.4"  "gene.5"  "gene.6"  "gene.7"  "gene.8"  "gene.9" 
+## [10] "gene.10" "gene.11" "gene.12" "gene.13" "gene.14" "gene.15" "gene.16" "gene.17" "gene.18"
+## [19] "gene.19" "gene.20" "gene.21" "gene.22" "gene.23" "gene.24" "gene.25" "gene.26" "gene.27"
+## [28] "gene.28" "gene.29" "gene.30" "gene.31" "gene.32" "gene.33" "gene.34" "gene.35" "gene.36"
+## [37] "gene.37" "gene.38" "gene.39" "gene.40" "gene.41" "gene.42" "gene.43" "gene.44" "gene.45"
+## [46] "gene.46" "gene.47" "gene.48" "gene.49" "gene.50"
+##
 ## $genesclasses$Spure
-##  [1] "ODZ2"         "TNFSF4"       "DKK1"         "EDIL3"       
-##  [5] "ANKRD30B"     "RNU5A-8P"     "SERPINE1"     "ADAMTS6"     
-##  [9] "ITGA11"       "CDH2"         "ADAMTS5"      "RAB3B"       
-## [13] "ANLN"         "CDH13"        "HTR1D"        "MME"         
-## [17] "ANKRD1"       "MFAP5"        "CD274"        "FBN2"        
-## [21] "MIR548H3"     "RN5S385"      "LOXL2"        "COL5A2"      
-## [25] "PDCD1LG2"     "IBSP"         "IGF2BP2"      "TPX2"        
-## [29] "MIR3167"      "TNC"          "GREM1"        "CD70"        
-## [33] "ENTPD4"       "CXCL9"        "DCDC2"        "ARNTL2"      
-## [37] "COL4A1"       "INHBA"        "LOC100507460" "ALPK2"       
-## [41] "ADAM12"       "MELK"         "OXTR"         "SLC7A5"      
-## [45] "MMP9"         "HS3ST3A1"     "AXL"          "ITGB3"       
-## [49] "CENPI"        "ENPP1"       
-## 
+## [1] "gene.101" "gene.102" "gene.103" "gene.104" "gene.105" "gene.106" "gene.107" "gene.108"
+## [9] "gene.109" "gene.110" "gene.111" "gene.112" "gene.113" "gene.114" "gene.115" "gene.116"
+## [17] "gene.117" "gene.118" "gene.119" "gene.120" "gene.121" "gene.122" "gene.123" "gene.124"
+## [25] "gene.125" "gene.126" "gene.127" "gene.128" "gene.129" "gene.130" "gene.131" "gene.132"
+## [33] "gene.133" "gene.134" "gene.135" "gene.136" "gene.137" "gene.138" "gene.139" "gene.140"
+## [41] "gene.141" "gene.142" "gene.143" "gene.144" "gene.145" "gene.146" "gene.147" "gene.148"
+## [49] "gene.149" "gene.150"
+##
 ## $genesclasses$normal
-##  [1] "SFTPA1"     "CEACAM6"    "CYP2B7P1"   "SCGB3A2"    "NAPSA"     
-##  [6] "SFTPB"      "SFTA3"      "AQP4"       "GKN2"       "ROS1"      
-## [11] "WIF1"       "PIGR"       "NDNF"       "ITGB6"      "SLC34A2"   
-## [16] "SCN7A"      "CLDN18"     "BMP5"       "CXCL17"     "CES1"      
-## [21] "SFTPC"      "LRRK2"      "AGR3"       "C1orf116"   "ATP13A4"   
-## [26] "LIPH"       "CACNA2D2"   "CPA3"       "SLC6A14"    "SFTPD"     
-## [31] "RTKN2"      "IGLV3-27"   "DMBT1"      "ZNF385B"    "SFTPA2"    
-## [36] "MYH11"      "KCNJ15"     "LHFPL3-AS2" "MS4A2"      "ITGA8"     
-## [41] "PON3"       "TMPRSS2"    "VEPH1"      "LAMP3"      "HHIP"      
-## [46] "IL33"       "TMC5"       "EPCAM"      "KIT"        "MMRN1"
+## [1] "gene.51"  "gene.52"  "gene.53"  "gene.54"  "gene.55"  "gene.56"  "gene.57"  "gene.58" 
+## [9] "gene.59"  "gene.60"  "gene.61"  "gene.62"  "gene.63"  "gene.64"  "gene.65"  "gene.66" 
+## [17] "gene.67"  "gene.68"  "gene.69"  "gene.70"  "gene.71"  "gene.72"  "gene.73"  "gene.74" 
+## [25] "gene.75"  "gene.76"  "gene.77"  "gene.78"  "gene.79"  "gene.80"  "gene.81"  "gene.82" 
+## [33] "gene.83"  "gene.84"  "gene.85"  "gene.86"  "gene.87"  "gene.88"  "gene.89"  "gene.90" 
+## [41] "gene.91"  "gene.92"  "gene.93"  "gene.94"  "gene.95"  "gene.96"  "gene.97"  "gene.98" 
+## [49] "gene.99"  "gene.100"
 ```
 
 
