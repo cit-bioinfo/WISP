@@ -1,19 +1,32 @@
-WISP.getPureCentro = function(data,cl,pureSamples_filtering = TRUE, nb_markers_selection = c("custom", "optim_kappa")[1],   nb_markers_max_perClass = 50, markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE, markers_cutoff_auc = 0.8, pureSamples_deltaTopWeights = 0.5, plot_heatmap = TRUE, add_markers = NULL, col_purePop = NULL){
+WISP.getPureCentro = function(data,cl,pureSamples_filtering = TRUE, nb_markers_selection = c("custom", "optim_kappa")[1],   nb_markers_max_perClass = 50, markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE, markers_cutoff_auc = 0.8, pureSamples_deltaTopWeights = 0.5, plot_heatmap = TRUE, add_markers = NULL, col_purePop = NULL, sum_LessThanOne = TRUE){
     
     datatot = data
+    if(is.null(names(cl))){
+        names(cl) = colnames(data)
+        warning("The vector cl of the classes does not contain names, WISP assumes that the samples are in the same order as in the data.")
+    } else if(all(names(cl) == colnames(data)) == "FALSE"){
+        stop("The names in the vector cl of the classes do not match the sample names in the data.")
+    }
     cltot = cl
     totsample = colnames(data)
     ind2keep = 0
     if(pureSamples_filtering == TRUE){
-        
         resW = data.frame(1:ncol(data))
         while(length(ind2keep) != nrow(resW)){
             print("Retrieving markers")
             resTest = testmarkers(data,cl,markers_cutoff_pval_anovatest, markers_pval_anovatest_fdr)
             print("Centroid calculation")
-            genescentro = centroestim(data, cl, resTest = resTest, nb_markers_selection=nb_markers_selection, nb_markers_max_perClass = nb_markers_max_perClass, markers_cutoff_auc = markers_cutoff_auc, add_markers = add_markers,markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE)$centroid
+            centrores = centroestim(data, cl, resTest = resTest, nb_markers_selection=nb_markers_selection, nb_markers_max_perClass = nb_markers_max_perClass, markers_cutoff_auc = markers_cutoff_auc, add_markers = add_markers,markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE)
+            genescentro = centrores$centroid
+            if(length(setdiff(levels(as.factor(cl)), levels(as.factor(centrores$cl)))>0)){
+                popweak =  setdiff(levels(as.factor(cl)), levels(as.factor(centrores$cl)))
+                print(paste("Population", popweak, "has no specific markers and has been removed.", sep=" "))
+                warning(paste("Population", popweak, "has no specific markers and has been removed.", sep=" "))
+            }
+            cl = centrores$cl
+            data = centrores$data
             print("Weight estimation")
-            resW = WISP.getWeight(as.matrix(data[rownames(genescentro),]), as.matrix(genescentro))
+            resW = WISP.getWeight(as.matrix(data[rownames(genescentro),]), as.matrix(genescentro), sum_LessThanOne)
             names(cl) = colnames(data)
             resW$labelhisto = as.factor(cl[rownames(resW)])
             resW=resW[resW$WARNING == "OK",]
@@ -53,7 +66,7 @@ WISP.getPureCentro = function(data,cl,pureSamples_filtering = TRUE, nb_markers_s
         nbclasses = nlevels(as.factor(cltot))
         
         if(is.null(col_purePop)){
-            BaseColors <- setNames(rainbow(nbclasses), levels(as.factor(cltot)))
+            BaseColors <- stats::setNames(grDevices::rainbow(nbclasses), levels(as.factor(cltot)))
             
         } else {
             BaseColors = col_purePop
@@ -98,9 +111,9 @@ WISP.getPureCentro = function(data,cl,pureSamples_filtering = TRUE, nb_markers_s
                 col = list("Classes" =  SelectionColors.removed))
                 ht2 = ComplexHeatmap::Heatmap(data.removed[,names(sort(cl.removed))], circlize::colorRamp2(c(-2, 0, 2), c("blue", "white", "red")), cluster_columns = FALSE,show_row_names = FALSE,show_column_names = T, cluster_rows = FALSE,column_names_side="top",top_annotation = ha2, column_names_gp = grid::gpar(fontsize = 7), show_heatmap_legend = FALSE,column_title = "Samples removed")
             }
-            
             ComplexHeatmap::draw(hr+ht1+ht2,gap = unit(1.5, "cm"))
             names(indremoved) = cltot[indremoved]
+            
         } else {
             ComplexHeatmap::draw(hr+ht1)
             

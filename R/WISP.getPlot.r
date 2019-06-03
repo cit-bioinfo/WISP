@@ -2,14 +2,19 @@ WISP.getPlot <- function(w, weight_filtered = FALSE, col_purePop = NULL,
 annotsup = NULL, col_annotsup = NULL, plot_type = c("heatmap", "barplot")[1], heatmap_orderedby=NULL, barplot_split = c("by.topweight", "by.annotsup")[1]){
     
     cl.weight = gsub("weight[.]","", grep("filtered", grep("weight", colnames(w), value = TRUE), value = TRUE, invert = TRUE))
-    
     if(is.null(col_purePop)) {
-        col_purePop <- setNames(rainbow(length(cl.weight)), cl.weight)
+        col_purePop <- stats::setNames(rainbow(length(cl.weight)), cl.weight)
     }
     if(!is.null(annotsup)){
+        if(is.null(names(annotsup))){
+            names(annotsup) = rownames(w)
+            warning("The vector annotsup does not contain names, WISP assumes that the samples are in the same order as in the data.")
+        } else if(all(names(annotsup) == rownames(w)) == "FALSE"){
+            stop("The names in the vector annotsup do not match the sample names in the data.")
+        }
         annotsup.levels = unique(annotsup)
         if(is.null(col_annotsup)) {
-            col_annotsup <- setNames(rainbow(length(annotsup.levels)), annotsup.levels)
+            col_annotsup <- stats::setNames(grDevices::rainbow(length(annotsup.levels)), annotsup.levels)
         }
     }
     if(plot_type=="barplot"){
@@ -17,7 +22,8 @@ annotsup = NULL, col_annotsup = NULL, plot_type = c("heatmap", "barplot")[1], he
             stop("Error- if barplot_split==by.annotsup, annotsup can't be NULL")
         }
         
-        if(weight_filtered == T) {column.weight <- grep("filtered", grep("weight", colnames(w), value = TRUE), value = TRUE)
+        if(weight_filtered == TRUE) {
+            column.weight <- grep("filtered", grep("weight", colnames(w), value = TRUE), value = TRUE)
         } else {column.weight <- grep("filtered", grep("weight", colnames(w), value = TRUE), value = TRUE, invert = TRUE)}
         
         if(barplot_split=="by.topweight"){
@@ -26,7 +32,7 @@ annotsup = NULL, col_annotsup = NULL, plot_type = c("heatmap", "barplot")[1], he
             dat <- data.frame(w[, c(column.weight)])
             dat$samplename = rownames(w)
             dat$annot = w$topWeightedClass
-        }else {
+        } else {
             col.class =col_annotsup
             annot.samples = annotsup[rownames(w)]
             dat <- data.frame(w[, c(column.weight)])
@@ -36,9 +42,10 @@ annotsup = NULL, col_annotsup = NULL, plot_type = c("heatmap", "barplot")[1], he
         
         colnames(dat) = gsub("[.]filtered","", gsub("weight[.]","",colnames(dat)))
         suppressMessages({datf <- reshape2::melt(dat)})
-        g1=ggplot2::ggplot(data = datf, aes(x = as.factor(samplename), y = value)) +  ylab("Estimated contingent proportions") +
-        geom_bar(aes(fill = as.factor(variable)), stat = "identity") +
-        facet_grid(~annot, scale="free_x", space="free")+ theme(axis.title.x=element_blank(),
+        datf$samplename = as.factor(rownames(w))
+        g1=ggplot2::ggplot(data = datf, aes_string(x = "samplename", y = "value")) +  ylab("Estimated contingent proportions") +
+        geom_bar(aes_string(fill = "variable"), stat = "identity") +
+        facet_grid(~annot, scales="free_x", space="free")+ theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         legend.title=element_blank())+ scale_fill_manual(values=col_purePop)
@@ -51,9 +58,9 @@ annotsup = NULL, col_annotsup = NULL, plot_type = c("heatmap", "barplot")[1], he
             dtannot$annot = dat$annot
             dtannot$annotsup = annotsup[dat$samplename]
             
-            g2=ggplot2::ggplot(data = dtannot, aes(x = as.factor(samplename), y = value)) +
+            g2=ggplot2::ggplot(data = dtannot, aes_string(x = "samplename", y = "value")) +
             geom_bar(aes(fill = as.factor(annotsup)), stat = "identity") +
-            facet_grid(~annot, scale="free_x", space="free") + theme(axis.title.x=element_blank(),
+            facet_grid(~annot, scales="free_x", space="free") + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
             axis.ticks.x=element_blank(),
             axis.title.y = element_text(color="white"),
@@ -89,7 +96,7 @@ annotsup = NULL, col_annotsup = NULL, plot_type = c("heatmap", "barplot")[1], he
             annot = data.frame("annotsup" = annotsup[order(annotsup, w[, column.weight[heatmap_orderedby]])])
             ha = HeatmapAnnotation(df = annot,
             col = list("annotsup" = col_annotsup))
-            ht1 = ComplexHeatmap::Heatmap(t(w[rownames(annot),column.weight]), circlize::colorRamp2(c(0, 1), c("white", "black")), cluster_columns = FALSE,show_column_names = T, cluster_rows = FALSE,row_names_side="left",column_names_side="top", name = "weight",top_annotation = ha,row_names_gp = gpar(fontsize = 10),column_names_gp = gpar(fontsize = 10),bottom_annotation = hb)
+            ht1 = ComplexHeatmap::Heatmap(t(w[rownames(annot),column.weight]), circlize::colorRamp2(c(0, 1), c("white", "black")), cluster_columns = FALSE,show_column_names = T, cluster_rows = FALSE,row_names_side="left",column_names_side="top", name = "weight",top_annotation = ha,row_names_gp = grid::gpar(fontsize = 10),column_names_gp = grid::gpar(fontsize = 10),bottom_annotation = hb)
             ComplexHeatmap::draw(hr+ht1)
         }
     }

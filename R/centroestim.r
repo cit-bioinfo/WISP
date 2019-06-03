@@ -15,6 +15,7 @@ markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE)
             marksList$add = add_markers
         }
     }
+    
     if (nb_markers_selection == "optim_kappa") {
         bornMIN <- bornMinCN(data, cl, markers_cutoff_pval_anovatest, markers_pval_anovatest_fdr)
         allmarksList = lapply(bornMIN:200, function(x) {
@@ -27,7 +28,7 @@ markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE)
             names(marksList) = levels(cl)
             return(marksList)
         })
-        allmarks = lapply(allmarksList, function(x) unique(unlist(x)))
+        allmarks = lapply(allmarksList, function(x) {xtemp = as.character(unique(unlist(x))); xtemp[!is.na(xtemp)]})
         allcondnumber <- lapply(allmarks, function(marks) {
             centroid = data.frame(t(apply(data[marks, ], 1, function(x) tapply(x,
             cl, mean))))
@@ -58,7 +59,16 @@ markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE)
             }
         }
     }
+    if (sum(is.na(marksList))>0) {
+        popweak = names(marksList)[which(is.na(marksList))]
+        #warning(paste("Population", popweak, "has no specific markers and has been removed.", sep=" "))
+        names(cl) = colnames(data)
+        cl = cl[-which(cl %in% popweak)]
+        data = data[,names(cl)]
+        cl = as.factor(as.character(cl))
+        marksList = marksList[levels(cl)]
+    }
     centroid = data.frame(t(apply(data[unique(unlist(marksList)),
     ], 1, function(x) tapply(x, cl, mean))))
-    return(list(centroid = centroid, marksList = marksList))
+    return(list(centroid = centroid, marksList = marksList, cl = cl, data=data))
 }

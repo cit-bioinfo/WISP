@@ -1,4 +1,4 @@
-WISP.getWeight = function (data, centro, scaling = c("none", "scale", "center")[1], cutoff_gobalFtest = 0.05, Rsquared_cutoff = 0.2, cutoff_ttest_weights = 0.05)
+WISP.getWeight = function (data, centro, scaling = c("none", "scale", "center")[1], cutoff_gobalFtest = 0.05, Rsquared_cutoff = 0.5, cutoff_ttest_weights = 0.05, sum_LessThanOne = TRUE)
 {
     g = intersect(rownames(data), rownames(centro))
     data = data[g, ]
@@ -13,25 +13,38 @@ WISP.getWeight = function (data, centro, scaling = c("none", "scale", "center")[
     }
     nJ = ncol(centro)
     A = centro
-    E = rep(1, nJ)
-    F = 1
-    G = diag(nrow = nJ)
-    H = rep(0, nJ)
+    nSubj = ncol(data)
+    mixCoef = matrix(0, nSubj, nJ)
+    rownames(mixCoef) = colnames(data)
+    colnames(mixCoef) = colnames(centro)
+    Amat = cbind(rep(-1, nJ), diag(nJ))
+    b0vec = c(-1, rep(0, nJ))
+    
+    if(sum_LessThanOne==TRUE){
+        meq = 0
+    } else {
+        meq = 1
+    }
     output = data.frame(t(apply(data,2, function(y) {
+        obs = which(!is.na(y))
+        Dmat = t(centro[obs, ]) %*% centro[obs, ]
+        diag(Dmat) <- diag(Dmat) + 1e-08
+        mixCoef = quadprog::solve.QP(Dmat, t(centro[obs, ]) %*%
+        y[obs], Amat, b0vec, meq = meq)$sol
         B = as.matrix(y)
-        out = limSolve::lsei(A, B, E, F, G, H)
-        coeff = round(out$X, 4)
-        names(coeff) = paste("weight", names(coeff), sep=".")
+        coeff = round(mixCoef, 4)
+        names(coeff) = paste("weight", colnames(centro), sep = ".")
         vBeta = matrix(coeff)
-        dSigmaSq = sum((B - A%*%vBeta)^2)/(nrow(A)-ncol(A))
-        dTotalSq = sum((B-mean(B))^2)/(nrow(A)-1)
-        dModelSq = sum((A%*%vBeta-mean(B))^2)/(ncol(A)-1)
-        mVarCovar = try(dSigmaSq*chol2inv(chol(t(A)%*%A)))
-        Adjusted.R.squared = round((dTotalSq-dSigmaSq)/dTotalSq,2)
+        dSigmaSq = sum((B - A %*% vBeta)^2)/(nrow(A) - ncol(A))
+        dTotalSq = sum((B)^2)/(nrow(A))
+        dModelSq = sum((A %*% vBeta)^2)/(ncol(A))
+        mVarCovar = try(dSigmaSq * chol2inv(chol(t(A) %*% A)))
+        Adjusted.R.squared = round((dTotalSq - dSigmaSq)/dTotalSq,
+        3)
         Ftest = dModelSq/dSigmaSq
-        p.Ftest=stats::pf(q=Ftest, df1=ncol(A)-1, df2=nrow(A)-ncol(A), lower.tail=FALSE)
+        p.Ftest = stats::pf(q = Ftest, df1 = ncol(A), df2 = nrow(A) -
+        ncol(A), lower.tail = FALSE)
         ng = nrow(centro)
-        
         if(!is.character(mVarCovar)){
             vStdErr = sqrt(diag(mVarCovar))
             CI.inf = sapply(1:nJ,function(j){round(coeff[j] - (stats::qt(1-cutoff_ttest_weights/2,ng-nJ)*vStdErr[j]),2)})

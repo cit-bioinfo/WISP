@@ -7,7 +7,7 @@ bornMinCN <- function(data, cl, markers_cutoff_pval_anovatest = 0.05, markers_pv
     allp1 <- unlist(lapply(levels(cl), function(i) {
         thiscl = (cl == i) * 1
         names(thiscl) = names(cl)
-        a <- sapply(signifAnova, function(g){t.test(unlist(data[g,]) ~ thiscl, alternative="greater")$p.value})
+        a <- sapply(signifAnova, function(g){stats::t.test(unlist(data[g,]) ~ thiscl, alternative="greater")$p.value})
         names(a) = signifAnova
         h1Proportion(a)
     }))

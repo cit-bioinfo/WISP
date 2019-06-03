@@ -12,8 +12,8 @@ an R package for retrieving pure population samples and estimating in a sample t
 \tabular{ll}{
 Package: \tab WISP\cr
 Type: \tab Package\cr
-Version: \tab 2.1\cr
-Date: \tab 2018-04-07\cr
+Version: \tab 2.3\cr
+Date: \tab 2019-01-06\cr
 License: \tab GPL>2\cr
 }
 
@@ -36,9 +36,9 @@ Maintainer: Yuna Blum <yuna.blum@gmail.com>
 \examples{
 data(dataWISP)
 
-resPure = WISP.getPureCentro(data= dataWISP$datapure,cl= dataWISP$clpure, nb_markers_selection = "custom",   nb_markers_max_perClass = 50, pureSamples_deltaTopWeights = 0.6, plot_heatmap = TRUE, col_purePop = c("Epure"="blue","normal"="grey","Spure"="green"))
+resPure = WISP.getPureCentro(data= dataWISP$datapure,cl= dataWISP$clpure, nb_markers_selection = "custom",   nb_markers_max_perClass = 50, pureSamples_deltaTopWeights = 0.6, plot_heatmap = TRUE, col_purePop = c("Epure"="blue","normal"="grey","Spure"="green"), sum_LessThanOne = FALSE)
 
-resW = WISP.getWeight(dataWISP$data, resPure$genescentro)
+resW = WISP.getWeight(dataWISP$data, resPure$genescentro, sum_LessThanOne = FALSE)
 
 WISP.getPlot(resW, annotsup = dataWISP$histo, plot_type = "heatmap", col_purePop = c("Epure"="blue","normal"="grey","Spure"="green"))
 WISP.getPlot(resW, annotsup = dataWISP$histo, plot_type = "barplot", col_purePop = c("Epure"="blue","normal"="grey","Spure"="green"))

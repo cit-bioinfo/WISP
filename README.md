@@ -1,6 +1,6 @@
 # WISP
 
-WISP (Weighted In Silico Pathology) is a novel approach to assess intra-tumoral heterogeneity from bulk molecular profiles. Based on predefined pure molecular or histological populations for a particular cancer type, our approach gives a fine description of each tumor in a standardized way. The methodology is based on non-negative least squares regression and quadratic programming optimization for estimating the mixing proportions of distinct populations for a tumoral sample. It can be applied on trancriptomic data or methylation data.
+WISP (Weighted In Silico Pathology) is a novel approach to assess intra-tumoral heterogeneity from bulk molecular profiles. Based on predefined pure molecular or histological populations for a particular cancer type, our approach gives a fine description of each tumor in a standardized way. The methodology is based on non-negative least squares regression and quadratic programming optimization for estimating the mixing proportions of distinct populations for a tumor sample. It can be applied on trancriptomic data or methylation data.
 
 ## WISP steps
 
@@ -18,7 +18,7 @@ WISP consists in 3 main steps:
 
 For now, please provide a link to this github repository:
 
-<https://github.com/YunaBlum/WISP>
+<https://cit-bioinfo.github.io/WISP/>
 
 ## Install
 
@@ -27,7 +27,7 @@ You may install this package with [devtools]:
 [devtools]: https://github.com/hadley/devtools
 
 ```{r}
-devtools::install_github("YunaBlum/WISP")
+devtools::install_github("cit-bioinfo/WISP")
 library(WISP)
 ```
 
@@ -86,12 +86,12 @@ head(dataWISP$histo)
 `WISP.getPureCentro` function takes as input a data frame of gene expression restricted to samples considered as pure by the user (in our example `datapure`) and a vector of population names for each sample (in our example `clpure`). If `pureSamples_filtering` is set to TRUE, WISP will perform its sample filtering procedure. More precisely, for each presupposed pure sample, it estimates the proportions of all populations: if the difference between the supposed pure class proportion and the one of the second existing contingent is more that the threshold specified in `pureSamples_deltaTopWeights` argument, the sample is considered as a mixture of populations and is removed. For example, a threshold of 0.6 means that one expects to have at least 60% of the main existing population in a sample to consider it as pure.
 If `pureSamples_filtering` is set to FALSE the function will take all the presupposed pure samples to calculate the pure centroid profiles.
 For the centroid calculation, the function retrieves the markers that are specific to each population: if you want a particular number of markers per class you can set `nb_markers_selection` to "custom" and `nb_markers_max_perClass` with the desired number of markers. The final selection will be based on ANOVA p-value cutoff (`markers_cutoff_pval_anovatest`) and AUC cutoff (`markers_cutoff_auc`); genes are ranked by their logFC. If `nb_markers_selection` is set to "optim_kappa", the number of markers is chosen so that it optimizes the condition number. 
-If you wish particular genes to be present in the final centroid signature you can add a vector of gene names in `add_markers`.
+If you wish particular genes to be present in the final centroid signature you can add a vector of gene names in `add_markers`. If `sum_LessThanOne` is set to TRUE (default), quadratic optimization will use the constraint: sum of coefficients less than or equal to 1, if FALSE the sum of the coefficient will be equal to 1. This can be important if not all pure populations present in the mixed samples have been considered by the user.
 
 
 
 ```{r}
-resPure = WISP.getPureCentro(data= dataWISP$datapure,cl= dataWISP$clpure, pureSamples_filtering = TRUE, nb_markers_selection = "custom",   nb_markers_max_perClass = 50, markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE, markers_cutoff_auc = 0.8, pureSamples_deltaTopWeights = 0.6, plot_heatmap = TRUE, add_markers = NULL, col_purePop = c("Epure"="#f46d43","normal"="grey","Spure"="#66c2a5"))
+resPure = WISP.getPureCentro(data= dataWISP$datapure,cl= dataWISP$clpure, pureSamples_filtering = TRUE, nb_markers_selection = "custom",   nb_markers_max_perClass = 50, markers_cutoff_pval_anovatest = 0.05, markers_pval_anovatest_fdr = TRUE, markers_cutoff_auc = 0.8, pureSamples_deltaTopWeights = 0.6, plot_heatmap = TRUE, add_markers = NULL, col_purePop = c("Epure"="#f46d43","normal"="grey","Spure"="#66c2a5"), sum_LessThanOne = FALSE)
 ## [1] "Retrieving markers"
 ## [1] "Centroid calculation"
 ## [1] "Weight estimation"
@@ -165,11 +165,11 @@ lapply(resPure, head)
 ## Step2: Estimate mixing proportions of pure populations for each tumoral sample.
 <a name="Step2"></a>
 
-`WISP.getWeight` function takes as input a data frame of samples without any prior knowledge and the centroid profiles given by `WISP.getPureClass`. We let the user perform its own normalization method for the expression dataset as well as using unlogged data and centroids which can provide better results. If the centroid result is applied to another technology (example: pure centroid profiles estimated using expression array dataset and then used to estimate weights from RNAseq profiles), we suggest the user to center or scale the data using the `scaling` argument. In order to evaluate the accuracy of the models, the function performs a global F-test for each model and calculates the adjusted R-squared. Based on these two criteria, the function will annotate the sample as "LIMIT" or "OK" in the last column of the output object. Cutoff for the F-test p-value and adjusted R-squared can be set in the arguments `cutoff_gobalFtest` and `Rsquared_cutoff` respectively.
+`WISP.getWeight` function takes as input a data frame of samples without any prior knowledge and the centroid profiles given by `WISP.getPureClass`. We let the user perform its own normalization method for the expression dataset as well as using unlogged data and centroids which can provide better results. If the centroid result is applied to another technology (example: pure centroid profiles estimated using expression array dataset and then used to estimate weights from RNAseq profiles), we suggest the user to center or scale the data using the `scaling` argument. In order to evaluate the accuracy of the models, the function performs a global F-test for each model and calculates the adjusted R-squared. Based on these two criteria, the function will annotate the sample as "LIMIT" or "OK" in the last column of the output object. Cutoff for the F-test p-value and adjusted R-squared can be set in the arguments `cutoff_gobalFtest` and `Rsquared_cutoff` respectively. If `sum_LessThanOne` is set to TRUE (default), quadratic optimization will use the constraint: sum of coefficients less than or equal to 1, if FALSE the sum of the coefficient will be equal to 1. This can be important if not all pure populations present in the mixed samples have been considered by the user.
 
 
 ```{r}
-resW = WISP.getWeight(dataWISP$data, resPure$genescentro, scaling = c("none", "scale", "center")[1], cutoff_gobalFtest = 0.05, Rsquared_cutoff = 0.2, cutoff_ttest_weights = 0.05)
+resW = WISP.getWeight(dataWISP$data, resPure$genescentro, scaling = c("none", "scale", "center")[1], cutoff_gobalFtest = 0.05, Rsquared_cutoff = 0.2, cutoff_ttest_weights = 0.05, sum_LessThanOne = FALSE)
 head(resW)
 ##      weight.Epure weight.Spure weight.normal dist.Obs.Model Ftest.pvalue
 ## T013       0.8087       0.1147        0.0766          12.18 1.108085e-50

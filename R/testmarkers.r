@@ -30,7 +30,7 @@ testmarkers <- function (data, cl, markers_cutoff_pval_anovatest = 0.05, markers
                 a = unlist(lapply(signifAnova, function(prob) {
                     PresenceAbsence::auc(data.frame(colnames(data),
                     thiscl[colnames(data)], as.numeric(data[prob,
-                    ])), st.dev = F)
+                    ])), st.dev = FALSE)
                 }))
                 names(a) = signifAnova
                 a

@@ -1,13 +1,14 @@
 Package: WISP
 Type: Package
 Title: Weighted In Silico Pathology
-Version: 2.1
-Date: 2018-04-07
+Version: 2.3
+Date: 2019-01-06
 Author: Yuna Blum, Aurelien de Reynies
 Maintainer: Yuna Blum <yuna.blum@gmail.com>
-Depends: PresenceAbsence, limSolve, matrixStats, ComplexHeatmap, circlize, ggplot2, ggpubr, reshape2
+Depends: ComplexHeatmap, ggplot2
+Imports: PresenceAbsence, quadprog, matrixStats, circlize, ggpubr, reshape2
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 Description: an R package for retrieving pure population samples and estimating in a sample the proportion of the different contingents based on the pure profiles.
 License: GPL (>= 2)
-Packaged: 2018-04-07 09:28:49 UTC
+Packaged: 2019-01-06 09:28:49 UTC
