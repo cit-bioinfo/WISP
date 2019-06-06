@@ -140,15 +140,6 @@ lapply(resPure, head)
 ## [37] "gene.37" "gene.38" "gene.39" "gene.40" "gene.41" "gene.42" "gene.43" "gene.44" "gene.45"
 ## [46] "gene.46" "gene.47" "gene.48" "gene.49" "gene.50"
 ##
-## $genesclasses$Spure
-## [1] "gene.101" "gene.102" "gene.103" "gene.104" "gene.105" "gene.106" "gene.107" "gene.108"
-## [9] "gene.109" "gene.110" "gene.111" "gene.112" "gene.113" "gene.114" "gene.115" "gene.116"
-## [17] "gene.117" "gene.118" "gene.119" "gene.120" "gene.121" "gene.122" "gene.123" "gene.124"
-## [25] "gene.125" "gene.126" "gene.127" "gene.128" "gene.129" "gene.130" "gene.131" "gene.132"
-## [33] "gene.133" "gene.134" "gene.135" "gene.136" "gene.137" "gene.138" "gene.139" "gene.140"
-## [41] "gene.141" "gene.142" "gene.143" "gene.144" "gene.145" "gene.146" "gene.147" "gene.148"
-## [49] "gene.149" "gene.150"
-##
 ## $genesclasses$normal
 ## [1] "gene.51"  "gene.52"  "gene.53"  "gene.54"  "gene.55"  "gene.56"  "gene.57"  "gene.58" 
 ## [9] "gene.59"  "gene.60"  "gene.61"  "gene.62"  "gene.63"  "gene.64"  "gene.65"  "gene.66" 
@@ -157,6 +148,16 @@ lapply(resPure, head)
 ## [33] "gene.83"  "gene.84"  "gene.85"  "gene.86"  "gene.87"  "gene.88"  "gene.89"  "gene.90" 
 ## [41] "gene.91"  "gene.92"  "gene.93"  "gene.94"  "gene.95"  "gene.96"  "gene.97"  "gene.98" 
 ## [49] "gene.99"  "gene.100"
+##
+## $genesclasses$Spure
+## [1] "gene.101" "gene.102" "gene.103" "gene.104" "gene.105" "gene.106" "gene.107" "gene.108"
+## [9] "gene.109" "gene.110" "gene.111" "gene.112" "gene.113" "gene.114" "gene.115" "gene.116"
+## [17] "gene.117" "gene.118" "gene.119" "gene.120" "gene.121" "gene.122" "gene.123" "gene.124"
+## [25] "gene.125" "gene.126" "gene.127" "gene.128" "gene.129" "gene.130" "gene.131" "gene.132"
+## [33] "gene.133" "gene.134" "gene.135" "gene.136" "gene.137" "gene.138" "gene.139" "gene.140"
+## [41] "gene.141" "gene.142" "gene.143" "gene.144" "gene.145" "gene.146" "gene.147" "gene.148"
+## [49] "gene.149" "gene.150"
+
 ```
 
 
@@ -169,43 +170,43 @@ lapply(resPure, head)
 
 
 ```{r}
-resW = WISP.getWeight(dataWISP$data, resPure$genescentro, scaling = c("none", "scale", "center")[1], cutoff_gobalFtest = 0.05, Rsquared_cutoff = 0.2, cutoff_ttest_weights = 0.05, sum_LessThanOne = FALSE)
+resW = WISP.getWeight(dataWISP$data, resPure$genescentro, scaling = c("none", "scale", "center")[1], cutoff_gobalFtest = 0.05, Rsquared_cutoff = 0.5, cutoff_ttest_weights = 0.05, sum_LessThanOne = FALSE)
 head(resW)
-##      weight.Epure weight.Spure weight.normal dist.Obs.Model Ftest.pvalue
-## T013       0.8087       0.1147        0.0766          12.18 1.108085e-50
-## T058       0.8475       0.1066        0.0459           8.19 1.024975e-74
-## T066       0.9998       0.0000        0.0002           7.33 6.982654e-90
-## T070       0.0000       1.0000        0.0000          10.93 1.068890e-60
-## T078       0.8389       0.1611        0.0000          11.34 2.113089e-57
-## T080       0.6398       0.3070        0.0532          15.95 7.651597e-35
-##      Adjusted.R.squared Pvalue.Epure Pvalue.Spure Pvalue.normal
-## T013               0.80 2.194218e-55 5.203173e-04   0.003894200
-## T058               0.91 5.567254e-80 2.485520e-06   0.009932865
-## T066               0.94 1.791295e-96 1.000000e+00   0.989862939
-## T070               0.85 1.000000e+00 2.429116e-72   1.000000000
-## T078               0.85 4.331416e-61 3.287125e-07   1.000000000
-## T080               0.51 3.788155e-32 2.150684e-11   0.121916513
-##      weight.Epure.filtered weight.Spure.filtered weight.normal.filtered
-## T013                0.8087                0.1147                 0.0766
-## T058                0.8475                0.1066                 0.0459
-## T066                0.9998                0.0000                 0.0000
-## T070                0.0000                1.0000                 0.0000
-## T078                0.8389                0.1611                 0.0000
-## T080                0.6398                0.3070                 0.0000
-##      topWeightedClass deltaTopWeights     CI.Epure     CI.Spure
-## T013            Epure          0.6940 [0.75, 0.87] [0.05, 0.18]
-## T058            Epure          0.7409  [0.8, 0.89] [0.06, 0.15]
-## T066            Epure          0.9996    [0.96, 1]    [0, 0.04]
-## T070            Spure          1.0000    [0, 0.06]    [0.94, 1]
-## T078            Epure          0.6778  [0.78, 0.9]  [0.1, 0.22]
-## T080            Epure          0.3328 [0.56, 0.72] [0.22, 0.39]
-##         CI.normal WARNING
-## T013 [0.02, 0.13]      OK
-## T058 [0.01, 0.08]      OK
-## T066    [0, 0.03]      OK
-## T070    [0, 0.05]      OK
-## T078    [0, 0.05]      OK
-## T080    [0, 0.12]      OK
+##  weight.Epure weight.normal weight.Spure dist.Obs.Model  Ftest.pvalue
+##  T013       0.8087        0.0766       0.1147          12.18 5.943785e-127
+##  T058       0.8475        0.0459       0.1066           8.19 6.107129e-152
+##  T066       0.9998        0.0002       0.0000           7.33 1.049369e-159
+##  T070       0.0000        0.0000       1.0000          10.93 2.392456e-132
+##  T078       0.8389        0.0000       0.1611          11.34 4.226689e-131
+##  T080       0.6398        0.0532       0.3070          15.95 3.107440e-109
+##  Adjusted.R.squared Pvalue.Epure Pvalue.normal Pvalue.Spure
+##  T013              0.982 2.194218e-55   0.003894200 5.203173e-04
+##  T058              0.991 5.567254e-80   0.009932865 2.485520e-06
+##  T066              0.993 1.791295e-96   0.989862939 1.000000e+00
+##  T070              0.984 1.000000e+00   1.000000000 2.429116e-72
+##  T078              0.984 4.331416e-61   1.000000000 3.287125e-07
+##  T080              0.960 3.788155e-32   0.121916513 2.150684e-11
+##  weight.Epure.filtered weight.normal.filtered weight.Spure.filtered
+##  T013                0.8087                 0.0766                0.1147
+##  T058                0.8475                 0.0459                0.1066
+##  T066                0.9998                 0.0000                0.0000
+##  T070                0.0000                 0.0000                1.0000
+##  T078                0.8389                 0.0000                0.1611
+##  T080                0.6398                 0.0000                0.3070
+##  topWeightedClass deltaTopWeights     CI.Epure    CI.normal     CI.Spure
+##  T013            Epure          0.6940 [0.75, 0.87] [0.02, 0.13] [0.05, 0.18]
+##  T058            Epure          0.7409  [0.8, 0.89] [0.01, 0.08] [0.06, 0.15]
+##  T066            Epure          0.9996    [0.96, 1]    [0, 0.03]    [0, 0.04]
+##  T070            Spure          1.0000    [0, 0.06]    [0, 0.05]    [0.94, 1]
+##  T078            Epure          0.6778  [0.78, 0.9]    [0, 0.05]  [0.1, 0.22]
+##  T080            Epure          0.3328 [0.56, 0.72]    [0, 0.12] [0.22, 0.39]
+##  WARNING
+##  T013      OK
+##  T058      OK
+##  T066      OK
+##  T070      OK
+##  T078      OK
+##  T080      OK
 ```
 
 <img src="https://github.com/YunaBlum/WISP/raw/master/figures/heatmap_pures.png">
